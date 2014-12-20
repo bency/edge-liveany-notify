@@ -1,0 +1,19 @@
+{
+  "name": "liveany notify",
+  "version": "1.0",
+  "description":
+    "Shows off desktop notifications when stranger reply you.",
+  "permissions": [
+    "notifications",
+    "http://www.liveany.com/*",
+    "tabs",
+    "activeTab"
+  ],
+  "content_scripts": [
+      {
+          "matches": ["http://*/*", "https://*/*"],
+          "js": ["jquery.js", "myscript.js"]
+      }
+  ],
+  "manifest_version": 2
+}
