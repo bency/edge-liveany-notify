@@ -37,6 +37,11 @@ $(document).ready(function() {
             }
             if (message.match(/陌生人離開～～/)) {
                 $('title').text('陌生人已離開');
+                setTimeout(function(){
+                    if (notification) {
+                        notification.close();
+                    }
+                }, 5000);
             }
             notifyMe(message);
         }
