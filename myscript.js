@@ -6,9 +6,6 @@ function notifyMe(text) {
         return;
     }
     
-    if (Notification.permission !== "granted")
-        Notification.requestPermission();
-    
     notification = new Notification('LiveAny', {
         icon: 'http://www.liveany.com/favicon.ico',
         body: text,
@@ -28,6 +25,9 @@ function notifyMe(text) {
     }
 }
 $(document).ready(function() {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
     $("#display_area").bind("DOMSubtreeModified", function() {
         message = $(this).children().last().clone().children().remove().end().text();
         if (message.match(/^陌生人/) && !document.hasFocus()) {
