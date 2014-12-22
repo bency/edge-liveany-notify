@@ -1,5 +1,10 @@
 not_notify = true;
 notification = null
+$('#display_area').ready(function(){
+    $('#ads').remove();
+    $('#display_area > div').remove();
+    $('#base').css('right', 0);
+});
 function notifyMe(text) {
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
