@@ -3,7 +3,7 @@
   "version": "1.0",
   "description":
     "Shows off desktop notifications when stranger reply you.",
-  "icnos": {"64": "64.png", "128": "128.png"},
+  "icons": {"64": "64.png", "128": "128.png"},
   "permissions": [
     "notifications",
     "http://www.liveany.com/*",
