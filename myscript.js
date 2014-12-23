@@ -7,7 +7,7 @@ $('#ads').ready(function(){
 $('#display_area').ready(function(){
     $('#display_area > div').remove();
 });
-function notifyMe(text) {
+var notifyMe = function (text) {
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
