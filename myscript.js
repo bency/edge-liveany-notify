@@ -2,7 +2,7 @@ not_notify = true;
 notification = null
 $('#ads').ready(function(){
     $('#base').css('right', 0);
-    $(this).remove();
+    $('#ads').remove();
 })
 $('#display_area').ready(function(){
     $('#display_area > div').remove();
