@@ -1,9 +1,11 @@
 not_notify = true;
 notification = null
-$('#display_area').ready(function(){
-    $('#ads').remove();
-    $('#display_area > div').remove();
+$('#ads').ready(function(){
     $('#base').css('right', 0);
+    $(this).remove();
+})
+$('#display_area').ready(function(){
+    $('#display_area > div').remove();
 });
 function notifyMe(text) {
     if (!Notification) {
