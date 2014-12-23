@@ -5,7 +5,7 @@ $('#ads').ready(function(){
     $('#ads').remove();
 })
 $('#display_area').ready(function(){
-    $('#display_area > div').remove();
+    $('#display_area').find('div').first().remove();
 });
 function notifyMe(text) {
     if (!Notification) {
