@@ -2,10 +2,10 @@ not_notify = true;
 notification = null
 $('#ads').ready(function(){
     $('#base').css('right', 0);
-    $(this).remove();
+    $('#ads').remove();
 })
 $('#display_area').ready(function(){
-    $('#display_area > div').remove();
+    $('#display_area').find('div').first().remove();
 });
 var notifyMe = function (text) {
     if (!Notification) {
