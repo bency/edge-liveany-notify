@@ -1,4 +1,5 @@
 not_notify = true;
+orig_title = $('title').text();
 notification = null
 $('#ads').ready(function(){
     $('#base').css('right', 0);
@@ -56,6 +57,7 @@ $(document).ready(function() {
     $(window).focus(function() {
         if (notification) {
             notification.close();
+            $('title').text(orig_title);
         }
     })
 });
