@@ -24,9 +24,6 @@ var notifyMe = function (text) {
     
     notification.onclick = function () {
         not_notify = true;
-        if (notification.body.match(/陌生人離開～～/)) {
-            $('title').text('陌生人已離開');
-        }
         window.focus();
         $('#inputText').focus();
     }
@@ -38,12 +35,15 @@ $(document).ready(function() {
     $("#display_area").bind("DOMSubtreeModified", function() {
         message = $(this).children().last().clone().children().remove().end().text();
         if (message.match(/^陌生人/) && !document.hasFocus()) {
+
+            // 將訊息顯示在標題列上
+            $('title').text(message);
+
             if (!not_notify) {
                 notification.close();
                 notification = null;
             }
             if (message.match(/陌生人離開～～/)) {
-                $('title').text('陌生人已離開');
                 setTimeout(function(){
                     if (notification) {
                         notification.close();
