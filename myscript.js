@@ -18,6 +18,12 @@ var notifyMe = function (text) {
         icon: 'http://www.liveany.com/favicon.ico',
         body: text,
     });
+    // 離開的訊息要設定 timeout
+    if (text.match(/陌生人離開～～/)) {
+        setTimeout(function(){
+            notification.close();
+        }, 5000);
+    }
     
     if (notification) {
         not_notify = false;
@@ -50,14 +56,6 @@ $(document).ready(function() {
                 notification = null;
             }
 
-            // 離開的訊息要設定 timeout
-            if (message.match(/陌生人離開～～/)) {
-                setTimeout(function(){
-                    if (notification) {
-                        notification.close();
-                    }
-                }, 5000);
-            }
             notifyMe(message);
         }
     });
