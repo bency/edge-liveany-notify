@@ -4,7 +4,7 @@ notification = null
 $('#ads').ready(function(){
     $('#base').css('right', 0);
     $('#ads').remove();
-})
+});
 $('#display_area').ready(function(){
     $('#display_area').find('div').first().remove();
 });
@@ -66,5 +66,5 @@ $(document).ready(function() {
             notification.close();
             $('title').text(orig_title);
         }
-    })
+    });
 });
