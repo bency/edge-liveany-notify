@@ -8,6 +8,15 @@ $('#ads').ready(function(){
 $('#display_area').ready(function(){
     $('#display_area').find('div').first().remove();
 });
+function youtube_parser(url){
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    if (match&&match[7].length==11){
+        return match[7];
+    }else{
+        return false;
+    }
+}
 var notifyMe = function (text) {
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
