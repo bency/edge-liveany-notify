@@ -36,13 +36,23 @@ var notifyMe = function (text) {
     }
 }
 var enhanceMessage = function() {
-    message = $(this).children().last().clone().children().remove().end().text();
+    $orig_message = $(this).children().last();
+    var $message = $orig_message.clone();
+    var date = $message.children().clone();
+    var message_text = $message.children().remove().end().text();
+    var new_text = message_text.replace(
+            /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(#\S*)?)/g,
+            '<a href="$1" target="_blank" >$1</a>');
+    var new_message = new_text + '<small>' + date.text() + '</small>';
+    $("#display_area").unbind("DOMSubtreeModified", enhanceMessage);
+    $orig_message.html(new_message);
+    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
 
     // 陌生人訊息
-    if (message.match(/^陌生人/) && !document.hasFocus()) {
+    if (message_text.match(/^陌生人/) && !document.hasFocus()) {
 
         // 將訊息顯示在標題列上
-        $('title').text(message);
+        $('title').text(message_text);
 
         // 若還存在上一則提示，則強制關閉
         if (!not_notify) {
@@ -50,7 +60,7 @@ var enhanceMessage = function() {
             notification = null;
         }
 
-        notifyMe(message);
+        notifyMe(message_text);
     }
 }
 $(document).ready(function() {
