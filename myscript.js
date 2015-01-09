@@ -41,7 +41,7 @@ var enhanceMessage = function() {
     var date = $message.children().clone();
     var message_text = $message.children().remove().end().text();
     var new_text = message_text.replace(
-            /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(#\S*)?)/g,
+            /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(#\S*)?)/g,
             '<a href="$1" target="_blank" >$1</a>');
     var new_message = new_text + '<small>' + date.text() + '</small>';
     $("#display_area").unbind("DOMSubtreeModified", enhanceMessage);
