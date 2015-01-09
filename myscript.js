@@ -52,6 +52,9 @@ var enhanceMessage = function() {
     var new_text = message_text.replace(
             /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(#\S*)?)/g,
             '<a href="$1" target="_blank" >$1</a>');
+    if (youtube_id = youtube_parser(message_text)) {
+        new_text = new_text + '<br><iframe width="560" height="315" src="//www.youtube.com/embed/' + youtube_id + '" frameborder="0" allowfullscreen></iframe>';
+    }
     var new_message = new_text + '<small>' + date.text() + '</small>';
     $("#display_area").unbind("DOMSubtreeModified", enhanceMessage);
     $orig_message.html(new_message);
