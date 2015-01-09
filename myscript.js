@@ -35,30 +35,31 @@ var notifyMe = function (text) {
         $('#inputText').focus();
     }
 }
+var enhanceMessage = function() {
+    message = $(this).children().last().clone().children().remove().end().text();
+
+    // 陌生人訊息
+    if (message.match(/^陌生人/) && !document.hasFocus()) {
+
+        // 將訊息顯示在標題列上
+        $('title').text(message);
+
+        // 若還存在上一則提示，則強制關閉
+        if (!not_notify) {
+            notification.close();
+            notification = null;
+        }
+
+        notifyMe(message);
+    }
+}
 $(document).ready(function() {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     }
 
     // 出現新訊息時的處理
-    $("#display_area").bind("DOMSubtreeModified", function() {
-        message = $(this).children().last().clone().children().remove().end().text();
-
-        // 陌生人訊息
-        if (message.match(/^陌生人/) && !document.hasFocus()) {
-
-            // 將訊息顯示在標題列上
-            $('title').text(message);
-
-            // 若還存在上一則提示，則強制關閉
-            if (!not_notify) {
-                notification.close();
-                notification = null;
-            }
-
-            notifyMe(message);
-        }
-    });
+    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
     $(window).focus(function() {
         if (notification) {
             notification.close();
