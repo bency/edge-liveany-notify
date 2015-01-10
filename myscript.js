@@ -1,6 +1,10 @@
+extid = chrome.i18n.getMessage("@@extension_id")
+sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
+sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
 not_notify = true;
 orig_title = $('title').text();
 notification = null
+$('body').append(sound_frame);
 $('#ads').ready(function(){
     $('#base').css('right', 0);
     $('#ads').remove();
@@ -18,6 +22,7 @@ function youtube_parser(url){
     }
 }
 var notifyMe = function (text) {
+    document.getElementById('msn-sound').play();
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
