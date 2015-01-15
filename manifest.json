@@ -7,6 +7,7 @@
   "permissions": [
     "notifications",
     "http://www.liveany.com/*",
+    "http://liveany-log.switchnbreak.com/*",
     "tabs",
     "activeTab"
   ],
