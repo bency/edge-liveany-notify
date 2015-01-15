@@ -1,6 +1,9 @@
 not_notify = true;
 orig_title = $('title').text();
 notification = null
+var htmlEncode = function(value){
+    return $('<div/>').text(value).html();
+}
 $('#ads').ready(function(){
     $('#base').css('right', 0);
     $('#ads').remove();
@@ -49,7 +52,7 @@ var enhanceMessage = function() {
     var $message = $orig_message.clone();
     var date = $message.children().clone();
     var message_text = $message.children().remove().end().text();
-    var new_text = message_text.replace(
+    var new_text = htmlEncode(message_text).replace(
             /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(#\S*)?)/g,
             '<a href="$1" target="_blank" >$1</a>');
     if (youtube_id = youtube_parser(message_text)) {
