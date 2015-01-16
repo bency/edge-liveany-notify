@@ -18,7 +18,6 @@ $('#display_area').ready(function(){
     $.ajax({
         url: 'http://liveany-log.switchnbreak.com/conversation',
         success: function(ret){
-            console.log(ret);
             conversation_hash = ret.hash;
         }
     });
@@ -79,7 +78,6 @@ var enhanceMessage = function() {
             url: 'http://liveany-log.switchnbreak.com/dialog',
             data: {hash: conversation_hash, content: new_text},
             success: function(){
-                console.log('save', new_text);
             }
         })
     }
