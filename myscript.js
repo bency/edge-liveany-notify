@@ -10,17 +10,7 @@ $('body').append(sound_frame);
 var htmlEncode = function(value){
     return $('<div/>').text(value).html();
 }
-$('#ads').ready(function(){
-    $('#base').css('right', 0);
-    $('#ads').remove();
-});
-$.post('http://liveany-log.switchnbreak.com/conversation').done( function(ret){
-            conversation_hash = ret.hash;
-    });
-$('#display_area').ready(function(){
 
-    $('#display_area').find('div').first().remove();
-});
 function youtube_parser(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var match = url.match(regExp);
@@ -96,6 +86,12 @@ var enhanceMessage = function() {
     }
 }
 $(document).ready(function() {
+    $('#base').css('right', 0);
+    $('#ads').remove();
+    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId}).done( function(ret){
+        conversation_hash = ret.hash;
+    });
+    $('#display_area').find('div').first().remove();
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     }
