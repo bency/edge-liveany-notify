@@ -7,6 +7,46 @@ conversation_hash = null;
 orig_title = $('title').text();
 notification = null
 $('body').append(sound_frame);
+
+var getRandomToken = function() {
+    // E.g. 8 * 32 = 256 bits token
+    var randomPool = new Uint8Array(32);
+    crypto.getRandomValues(randomPool);
+    var hex = '';
+    for (var i = 0; i < randomPool.length; ++i) {
+        hex += randomPool[i].toString(16);
+    }
+    // E.g. db18458e2782b2b77e36769c569e263a53885a9944dd0a861e5064eac16f1a
+    return hex.substring(0, 32);
+}
+
+var setCookie = function (cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+var getCookie = function (cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+var checkCookie = function() {
+    var user = getCookie("liveany_log");
+    if (user == "") {
+        var id = getRandomToken();
+        setCookie("liveany_log", id, 365);
+    }
+    return getCookie("liveany_log");
+}
+
 var htmlEncode = function(value){
     return $('<div/>').text(value).html();
 }
@@ -88,6 +128,7 @@ var enhanceMessage = function() {
 $(document).ready(function() {
     $('#base').css('right', 0);
     $('#ads').remove();
+    var userId = checkCookie();
     $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId}).done( function(ret){
         conversation_hash = ret.hash;
     });
