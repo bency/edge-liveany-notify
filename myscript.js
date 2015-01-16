@@ -14,13 +14,11 @@ $('#ads').ready(function(){
     $('#base').css('right', 0);
     $('#ads').remove();
 });
-$('#display_area').ready(function(){
-    $.ajax({
-        url: 'http://liveany-log.switchnbreak.com/conversation',
-        success: function(ret){
+$.post('http://liveany-log.switchnbreak.com/conversation').done( function(ret){
             conversation_hash = ret.hash;
-        }
     });
+$('#display_area').ready(function(){
+
     $('#display_area').find('div').first().remove();
 });
 function youtube_parser(url){
@@ -61,7 +59,6 @@ var notifyMe = function (text) {
     }
 }
 var enhanceMessage = function() {
-    count++;
     $orig_message = $(this).children().last();
     var $message = $orig_message.clone();
     var date = $message.children().clone();
@@ -73,13 +70,11 @@ var enhanceMessage = function() {
         new_text = new_text + '<br><iframe width="560" height="315" src="//www.youtube.com/embed/' + youtube_id + '" frameborder="0" allowfullscreen></iframe>';
     }
     var new_message = new_text + '<small>' + date.text() + '</small>';
-    if ('' !== conversation_hash && !new_message.match(/陌生人離開～～/) && count > 5) {
-        $.ajax({
-            url: 'http://liveany-log.switchnbreak.com/dialog',
-            data: {hash: conversation_hash, content: new_text},
-            success: function(){
-            }
-        })
+    if (null !== conversation_hash && conversation_hash.length > 0) {
+        $.post(
+            'http://liveany-log.switchnbreak.com/dialog',
+            {hash: conversation_hash, content: new_text}
+        )
     }
     $("#display_area").unbind("DOMSubtreeModified", enhanceMessage);
     $orig_message.html(new_message);
