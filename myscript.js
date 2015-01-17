@@ -93,9 +93,15 @@ var enhanceMessage = function() {
     var $message = $orig_message.clone();
     var date = $message.children().clone();
     var message_text = $message.children().remove().end().text();
-    var new_text = htmlEncode(message_text).replace(
-            /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(#\S*)?)/g,
-            '<a href="$1" target="_blank" >$1</a>');
+    var new_text = htmlEncode(message_text);
+    var linkMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
+    var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
+    var match = null;
+    if (match = new_text.match(imgMatch)) {
+        new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
+    } else if (match = new_text.match(linkMatch)) {
+        ew_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a>');
+    }
     if (youtube_id = youtube_parser(message_text)) {
         new_text = new_text + '<br><iframe width="560" height="315" src="//www.youtube.com/embed/' + youtube_id + '" frameborder="0" allowfullscreen></iframe>';
     }
