@@ -135,7 +135,8 @@ $(document).ready(function() {
     $('#base').css('right', 0);
     $('#ads').remove();
     var userId = checkCookie();
-    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId}).done( function(ret){
+    var count = $('#nowcounts').text();
+    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
     });
     $('#display_area').find('div').first().remove();
