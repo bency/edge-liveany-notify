@@ -131,7 +131,6 @@ var enhanceMessage = function() {
         notifyMe(message_text);
     }
 }
-$(document).ready(function() {
     $('#base').css('right', 0);
     $('#ads').remove();
     var userId = checkCookie();
@@ -152,4 +151,3 @@ $(document).ready(function() {
             $('title').text(orig_title);
         }
     });
-});
