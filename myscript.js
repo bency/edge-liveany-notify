@@ -2,7 +2,6 @@ extid = chrome.i18n.getMessage("@@extension_id")
 sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
 sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
 not_notify = true;
-count = 0;
 conversation_hash = null;
 orig_title = $('title').text();
 notification = null
@@ -90,6 +89,8 @@ var notifyMe = function (text) {
 }
 
 var newConnection = function() {
+    var userId = checkCookie();
+    var count = $('#nowcounts').text();
     $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
     });
@@ -145,18 +146,17 @@ var enhanceMessage = function() {
 
 // 出現新訊息時的處理
 $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
-$('#base').css('right', 0);
-$('#ads').remove();
-var userId = checkCookie();
-var count = $('#nowcounts').text();
-$('#display_area').find('div').first().remove();
-if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-}
 
-$(window).focus(function() {
+$(window).bind('focus',function() {
     if (notification) {
         notification.close();
         $('title').text(orig_title);
     }
 });
+
+$('#base').css('right', 0);
+$('#ads').remove();
+$('#display_area').find('div').first().remove();
+if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
