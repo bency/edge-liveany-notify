@@ -88,6 +88,13 @@ var notifyMe = function (text) {
         $('#inputText').focus();
     }
 }
+
+var newConnection = function() {
+    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
+        conversation_hash = ret.hash;
+    });
+}
+
 var enhanceMessage = function() {
     $orig_message = $(this).children().last();
     var $message = $orig_message.clone();
@@ -96,7 +103,11 @@ var enhanceMessage = function() {
     var new_text = htmlEncode(message_text);
     var linkMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
+    var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
+    if (new_text.match(connectedMatch)) {
+        newConnection();
+    }
     if (match = new_text.match(imgMatch)) {
         new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
     } else if (match = new_text.match(linkMatch)) {
@@ -138,9 +149,6 @@ $('#base').css('right', 0);
 $('#ads').remove();
 var userId = checkCookie();
 var count = $('#nowcounts').text();
-$.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
-    conversation_hash = ret.hash;
-});
 $('#display_area').find('div').first().remove();
 if (Notification.permission !== "granted") {
     Notification.requestPermission();
