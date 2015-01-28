@@ -1,12 +1,3 @@
-extid = chrome.i18n.getMessage("@@extension_id")
-sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
-sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
-not_notify = true;
-conversation_hash = null;
-orig_title = $('title').text();
-notification = null
-$('body').append(sound_frame);
-
 var getRandomToken = function() {
     // E.g. 8 * 32 = 256 bits token
     var randomPool = new Uint8Array(32);
@@ -144,6 +135,19 @@ var enhanceMessage = function() {
     }
 }
 
+if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+extid = chrome.i18n.getMessage("@@extension_id")
+sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
+sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
+not_notify = true;
+conversation_hash = null;
+orig_title = $('title').text();
+notification = null
+$('body').append(sound_frame);
+
 // 出現新訊息時的處理
 $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
 
@@ -157,6 +161,3 @@ $(window).bind('focus',function() {
 $('#base').css('right', 0);
 $('#ads').remove();
 $('#display_area').find('div').first().remove();
-if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-}
