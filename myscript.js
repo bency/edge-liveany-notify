@@ -131,23 +131,24 @@ var enhanceMessage = function() {
         notifyMe(message_text);
     }
 }
-    $('#base').css('right', 0);
-    $('#ads').remove();
-    var userId = checkCookie();
-    var count = $('#nowcounts').text();
-    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
-        conversation_hash = ret.hash;
-    });
-    $('#display_area').find('div').first().remove();
-    if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-    }
 
-    // 出現新訊息時的處理
-    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
-    $(window).focus(function() {
-        if (notification) {
-            notification.close();
-            $('title').text(orig_title);
-        }
-    });
+$('#base').css('right', 0);
+$('#ads').remove();
+var userId = checkCookie();
+var count = $('#nowcounts').text();
+$.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
+    conversation_hash = ret.hash;
+});
+$('#display_area').find('div').first().remove();
+if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+// 出現新訊息時的處理
+$("#display_area").bind("DOMSubtreeModified", enhanceMessage);
+$(window).focus(function() {
+    if (notification) {
+        notification.close();
+        $('title').text(orig_title);
+    }
+});
