@@ -1,3 +1,26 @@
+var extLocalStorage = function(namespace){
+        var localStorage = window.localStorage || {};
+        if(typeof namespace !== "string") {
+                throw new Error("extLocalStorage: Namespace must be a string");
+        }
+        var getRealKey = function(key){
+                return [namespace,".",key].join('');
+        };
+        var mainFunction = function(key, value){
+                var realKey = getRealKey(key);
+                if(value === undefined){
+                        return localStorage[realKey];
+                } else {
+                        return localStorage[realKey] = value;
+                }
+        };
+        mainFunction.remove = function(key){
+                var realKey = getRealKey(key);
+                delete localStorage[realKey];
+        };
+        return mainFunction;
+};
+
 var getRandomToken = function() {
     // E.g. 8 * 32 = 256 bits token
     var randomPool = new Uint8Array(32);
@@ -51,7 +74,6 @@ function youtube_parser(url){
     }
 }
 var notifyMe = function (text) {
-    document.getElementById('msn-sound').play();
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -84,6 +106,11 @@ var newConnection = function() {
     var count = $('#nowcounts').text();
     $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
+        var L = extLocalStorage(conversation_hash);
+        L('mute', 0);
+        L('notification', 1);
+        setUnMute();
+        setNotification();
     });
 }
 
@@ -131,8 +158,38 @@ var enhanceMessage = function() {
             notification = null;
         }
 
-        notifyMe(message_text);
+        var L = extLocalStorage(conversation_hash);
+        if (L('mute') === "0") {
+            document.getElementById('msn-sound').play();
+        }
+        if (L('notification') === "1") {
+            notifyMe(message_text);
+        }
     }
+}
+
+var setUnMute = function(){
+    $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
+    var L = extLocalStorage(conversation_hash);
+    L('mute', 0);
+}
+
+var setMute = function(){
+    $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
+    var L = extLocalStorage(conversation_hash);
+    L('mute', 1);
+}
+
+var setNotification = function(){
+    $('#notification').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+    var L = extLocalStorage(conversation_hash);
+    L('notification', 1);
+}
+
+var setNoNotification = function(){
+    $('#notification').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+    var L = extLocalStorage(conversation_hash);
+    L('notification', 0);
 }
 
 if (Notification.permission !== "granted") {
@@ -140,13 +197,21 @@ if (Notification.permission !== "granted") {
 }
 
 extid = chrome.i18n.getMessage("@@extension_id")
-sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
-sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
 not_notify = true;
 conversation_hash = null;
 orig_title = $('title').text();
 notification = null
+
+// append sound element
+sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
+sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
 $('body').append(sound_frame);
+
+var btns = '<div class="btn-group" style="float:right;top:0px">'
+        + '<button class="btn" id="mute"><span class="glyphicon"></span> 音效</button>'
+        + '<button class="btn" id="notification"><span class="glyphicon"></span> 彈出通知</button>'
+        + '</div>';
+$('body').append(btns);
 
 // 出現新訊息時的處理
 $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
@@ -155,6 +220,24 @@ $(window).bind('focus',function() {
     if (notification) {
         notification.close();
         $('title').text(orig_title);
+    }
+});
+
+$('body').on('click', '#mute', function(){
+    var mute = $(this).find('span.glyphicon-volume-off');
+    if (mute.length > 0) {
+        setUnMute();
+    } else {
+        setMute();
+    }
+});
+
+$('body').on('click', '#notification', function(){
+    var notification = $(this).find('span.glyphicon-ok');
+    if (notification.length > 0) {
+        setNoNotification();
+    } else {
+        setNotification();
     }
 });
 
