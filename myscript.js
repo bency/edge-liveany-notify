@@ -68,7 +68,7 @@ var notifyMe = function (text) {
     }
     
     notification = new Notification('LiveAny', {
-        icon: 'http://www.liveany.com/favicon.ico',
+        icon: 'chrome-extension://' + extid + '/64.png',
         body: text,
     });
     // 離開的訊息要設定 timeout
