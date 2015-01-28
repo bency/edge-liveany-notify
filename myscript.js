@@ -132,6 +132,8 @@ var enhanceMessage = function() {
     }
 }
 
+// 出現新訊息時的處理
+$("#display_area").bind("DOMSubtreeModified", enhanceMessage);
 $('#base').css('right', 0);
 $('#ads').remove();
 var userId = checkCookie();
@@ -144,8 +146,6 @@ if (Notification.permission !== "granted") {
     Notification.requestPermission();
 }
 
-// 出現新訊息時的處理
-$("#display_area").bind("DOMSubtreeModified", enhanceMessage);
 $(window).focus(function() {
     if (notification) {
         notification.close();
