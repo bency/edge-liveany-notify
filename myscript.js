@@ -169,13 +169,16 @@ var enhanceMessage = function() {
 var setUnMute = function(){
     $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
     var L = extLocalStorage(conversation_hash);
-    L('mute', 0);
+    document.getElementById('msn-sound').volume = L('volume');
+    $('#volume').val(L('volume'));
 }
 
 var setMute = function(){
     $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
     var L = extLocalStorage(conversation_hash);
-    L('mute', 1);
+    L('volume', $('#volume').val());
+    document.getElementById('msn-sound').volume = 0;
+    $('#volume').val(0);
 }
 
 var setNotification = function(){
@@ -206,6 +209,7 @@ sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" 
 $('body').append(sound_frame);
 
 var btns = '<div class="btn-group" style="float:right;top:0px">'
+        + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
         + '<button class="btn btn-default" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
         + '<button class="btn btn-default" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
         + '</div>';
@@ -236,6 +240,16 @@ $('body').on('click', '#notification', function(){
         setNoNotification();
     } else {
         setNotification();
+    }
+});
+
+$('body').on('change', '#volume', function(){
+    var volume = $(this).val();
+    document.getElementById('msn-sound').volume = volume;
+    if (volume == 0) {
+        $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
+    } else {
+        $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
     }
 });
 
