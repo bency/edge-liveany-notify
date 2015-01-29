@@ -107,8 +107,18 @@ var newConnection = function() {
     $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
         var L = extLocalStorage(conversation_hash);
-        L('mute', 0);
-        L('notification', 1);
+        var Last = extLocalStorage('LastStatus');
+        L('mute', Last('mute'));
+        L('notification', Last('notification'));
+        document.getElementById('msn-sound').volume = Last('last_volume');
+        $('#volume').val(Last('last_volume'));
+        if (L('notification') == "1") {
+            setNotification();
+        } else {
+            setNoNotification();
+        }
+        $('#mute').removeClass('disabled');
+        $('#notification').removeClass('disabled');
     });
 }
 
@@ -171,6 +181,8 @@ var setUnMute = function(){
     var L = extLocalStorage(conversation_hash);
     document.getElementById('msn-sound').volume = L('volume');
     $('#volume').val(L('volume'));
+    var Last = extLocalStorage('LastStatus');
+    Last('last_volume', L('volume'));
 }
 
 var setMute = function(){
@@ -179,18 +191,24 @@ var setMute = function(){
     L('volume', $('#volume').val());
     document.getElementById('msn-sound').volume = 0;
     $('#volume').val(0);
+    var Last = extLocalStorage('LastStatus');
+    Last('last_volume', 0);
 }
 
 var setNotification = function(){
     $('#notification').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
     var L = extLocalStorage(conversation_hash);
     L('notification', 1);
+    var Last = extLocalStorage('LastStatus');
+    Last('notification', 1);
 }
 
 var setNoNotification = function(){
     $('#notification').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
     var L = extLocalStorage(conversation_hash);
     L('notification', 0);
+    var Last = extLocalStorage('LastStatus');
+    Last('notification', 0);
 }
 
 if (Notification.permission !== "granted") {
@@ -210,8 +228,8 @@ $('body').append(sound_frame);
 
 var btns = '<div class="btn-group" style="float:right;top:0px">'
         + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
-        + '<button class="btn btn-default" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
-        + '<button class="btn btn-default" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
+        + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
+        + '<button class="btn btn-default disabled" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
         + '</div>';
 $('body').append(btns);
 
@@ -246,6 +264,8 @@ $('body').on('click', '#notification', function(){
 $('body').on('change', '#volume', function(){
     var volume = $(this).val();
     document.getElementById('msn-sound').volume = volume;
+    var Last = extLocalStorage('LastStatus');
+    Last('last_volume', volume);
     if (volume == 0) {
         $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
     } else {
