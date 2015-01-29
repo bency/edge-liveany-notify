@@ -109,8 +109,6 @@ var newConnection = function() {
         var L = extLocalStorage(conversation_hash);
         L('mute', 0);
         L('notification', 1);
-        setUnMute();
-        setNotification();
     });
 }
 
@@ -208,8 +206,8 @@ sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" 
 $('body').append(sound_frame);
 
 var btns = '<div class="btn-group" style="float:right;top:0px">'
-        + '<button class="btn" id="mute"><span class="glyphicon"></span> 音效</button>'
-        + '<button class="btn" id="notification"><span class="glyphicon"></span> 彈出通知</button>'
+        + '<button class="btn btn-default" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
+        + '<button class="btn btn-default" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
         + '</div>';
 $('body').append(btns);
 
