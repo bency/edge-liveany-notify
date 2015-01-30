@@ -150,9 +150,9 @@ var enhanceMessage = function() {
             {hash: conversation_hash, content: new_text}
         )
     }
-    $("#display_area").unbind("DOMSubtreeModified", enhanceMessage);
+    $(this).unbind("DOMSubtreeModified", enhanceMessage);
     $orig_message.html(new_message);
-    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
+    $(this).bind("DOMSubtreeModified", enhanceMessage);
 
     // 陌生人訊息
     if (message_text.match(/^陌生人/) && !document.hasFocus()) {
@@ -211,9 +211,74 @@ var setNoNotification = function(){
     Last('notification', 0);
 }
 
-if (Notification.permission !== "granted") {
-    Notification.requestPermission();
+var init = function () {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+
+    for (var key in localStorage) {
+        if (local_match = key.match(/[A-Z0-9]{32,32}/)) {
+            delete localStorage[key];
+        }
+    }
+
+    // append sound element
+    sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
+    sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
+    $('body').append(sound_frame);
+
+    var btns = '<div class="btn-group" style="float:right;top:0px">'
+            + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
+            + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
+            + '<button class="btn btn-default disabled" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
+            + '</div>';
+    $('body').append(btns);
+
+    // 出現新訊息時的處理
+    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
+
+    $(window).bind('focus',function() {
+        if (notification) {
+            notification.close();
+            $('title').text(orig_title);
+        }
+    });
+
+    $('body').on('click', '#mute', function(){
+        var mute = $(this).find('span.glyphicon-volume-off');
+        if (mute.length > 0) {
+            setUnMute();
+        } else {
+            setMute();
+        }
+    });
+
+    $('body').on('click', '#notification', function(){
+        var notification = $(this).find('span.glyphicon-ok');
+        if (notification.length > 0) {
+            setNoNotification();
+        } else {
+            setNotification();
+        }
+    });
+
+    $('body').on('change', '#volume', function(){
+        var volume = $(this).val();
+        document.getElementById('msn-sound').volume = volume;
+        var Last = extLocalStorage('LastStatus');
+        Last('last_volume', volume);
+        if (volume == 0) {
+            $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
+        } else {
+            $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
+        }
+    });
+
+    $('#base').css('right', 0);
+    $('#ads').remove();
+    $('#display_area').find('div').first().remove();
 }
+
 
 extid = chrome.i18n.getMessage("@@extension_id")
 not_notify = true;
@@ -221,58 +286,4 @@ conversation_hash = null;
 orig_title = $('title').text();
 notification = null
 
-// append sound element
-sound_path = 'chrome-extension://' + extid + '/msn-sound.mp3';
-sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
-$('body').append(sound_frame);
-
-var btns = '<div class="btn-group" style="float:right;top:0px">'
-        + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
-        + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
-        + '<button class="btn btn-default disabled" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
-        + '</div>';
-$('body').append(btns);
-
-// 出現新訊息時的處理
-$("#display_area").bind("DOMSubtreeModified", enhanceMessage);
-
-$(window).bind('focus',function() {
-    if (notification) {
-        notification.close();
-        $('title').text(orig_title);
-    }
-});
-
-$('body').on('click', '#mute', function(){
-    var mute = $(this).find('span.glyphicon-volume-off');
-    if (mute.length > 0) {
-        setUnMute();
-    } else {
-        setMute();
-    }
-});
-
-$('body').on('click', '#notification', function(){
-    var notification = $(this).find('span.glyphicon-ok');
-    if (notification.length > 0) {
-        setNoNotification();
-    } else {
-        setNotification();
-    }
-});
-
-$('body').on('change', '#volume', function(){
-    var volume = $(this).val();
-    document.getElementById('msn-sound').volume = volume;
-    var Last = extLocalStorage('LastStatus');
-    Last('last_volume', volume);
-    if (volume == 0) {
-        $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
-    } else {
-        $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
-    }
-});
-
-$('#base').css('right', 0);
-$('#ads').remove();
-$('#display_area').find('div').first().remove();
+init();
