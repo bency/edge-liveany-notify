@@ -1,24 +1,24 @@
 var extLocalStorage = function(namespace){
-        var localStorage = window.localStorage || {};
-        if(typeof namespace !== "string") {
-                throw new Error("extLocalStorage: Namespace must be a string");
+    var localStorage = window.localStorage || {};
+    if(typeof namespace !== "string") {
+        throw new Error("extLocalStorage: Namespace must be a string");
+    }
+    var getRealKey = function(key){
+        return [namespace,".",key].join('');
+    };
+    var mainFunction = function(key, value){
+        var realKey = getRealKey(key);
+        if (value === undefined) {
+            return localStorage[realKey];
+        } else {
+            return localStorage[realKey] = value;
         }
-        var getRealKey = function(key){
-                return [namespace,".",key].join('');
-        };
-        var mainFunction = function(key, value){
-                var realKey = getRealKey(key);
-                if(value === undefined){
-                        return localStorage[realKey];
-                } else {
-                        return localStorage[realKey] = value;
-                }
-        };
-        mainFunction.remove = function(key){
-                var realKey = getRealKey(key);
-                delete localStorage[realKey];
-        };
-        return mainFunction;
+    };
+    mainFunction.remove = function(key){
+        var realKey = getRealKey(key);
+        delete localStorage[realKey];
+    };
+    return mainFunction;
 };
 
 var getRandomToken = function() {
@@ -36,7 +36,7 @@ var getRandomToken = function() {
 var setCookie = function (cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+d.toUTCString();
+    var expires = "expires=" + d.toUTCString();
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
@@ -64,14 +64,10 @@ var htmlEncode = function(value){
     return $('<div/>').text(value).html();
 }
 
-function youtube_parser(url){
+var youtube_parser = function(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var match = url.match(regExp);
-    if (match&&match[7].length==11){
-        return match[7];
-    }else{
-        return false;
-    }
+    return (match&&match[7].length==11) ? match[7] : false;
 }
 var notifyMe = function (text) {
     if (!Notification) {
@@ -112,11 +108,7 @@ var newConnection = function() {
         L('notification', Last('notification'));
         document.getElementById('msn-sound').volume = Last('last_volume');
         $('#volume').val(Last('last_volume'));
-        if (L('notification') == "1") {
-            setNotification();
-        } else {
-            setNoNotification();
-        }
+        (L('notification') == "1") ? setNotification() : setNoNotification();
         $('#mute').removeClass('disabled');
         $('#notification').removeClass('disabled');
     });
@@ -132,9 +124,7 @@ var enhanceMessage = function() {
     var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
-    if (new_text.match(connectedMatch)) {
-        newConnection();
-    }
+    (new_text.match(connectedMatch)) ? newConnection() : null;
     if (match = new_text.match(imgMatch)) {
         new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
     } else if (match = new_text.match(linkMatch)) {
@@ -167,12 +157,8 @@ var enhanceMessage = function() {
         }
 
         var L = extLocalStorage(conversation_hash);
-        if (L('mute') === "0") {
-            document.getElementById('msn-sound').play();
-        }
-        if (L('notification') === "1") {
-            notifyMe(message_text);
-        }
+        (L('mute') === "0") ? document.getElementById('msn-sound').play() : null;
+        (L('notification') === "1") ? notifyMe(message_text) : null;
     }
 }
 
@@ -216,6 +202,11 @@ var init = function () {
         Notification.requestPermission();
     }
 
+    var Last = extLocalStorage('LastStatus');
+    if (Last('last_volume') === undefined || !isFinite(Last('last_volume'))) {
+        Last('last_volume', 0.5);
+    }
+
     for (var key in localStorage) {
         if (local_match = key.match(/[A-Z0-9]{32,32}/)) {
             delete localStorage[key];
@@ -238,28 +229,15 @@ var init = function () {
     $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
 
     $(window).bind('focus',function() {
-        if (notification) {
-            notification.close();
-            $('title').text(orig_title);
-        }
+        (notification) ? notification.close() : null;
     });
 
     $('body').on('click', '#mute', function(){
-        var mute = $(this).find('span.glyphicon-volume-off');
-        if (mute.length > 0) {
-            setUnMute();
-        } else {
-            setMute();
-        }
+        ($(this).find('span.glyphicon-volume-off').length > 0) ? setUnMute() :  setMute();
     });
 
     $('body').on('click', '#notification', function(){
-        var notification = $(this).find('span.glyphicon-ok');
-        if (notification.length > 0) {
-            setNoNotification();
-        } else {
-            setNotification();
-        }
+        ($(this).find('span.glyphicon-ok').length > 0) ? setNoNotification() : setNotification();
     });
 
     $('body').on('change', '#volume', function(){
