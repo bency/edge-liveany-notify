@@ -111,6 +111,13 @@ var newConnection = function() {
         (L('notification') == "1") ? setNotification() : setNoNotification();
         $('#mute').removeClass('disabled');
         $('#notification').removeClass('disabled');
+        socket = io('http://liveany-log.switchnbreak.com:55688/');
+        socket.on('connect', function(){
+            this.emit('login', {user: userId, conversation: conversation_hash});
+        });
+        socket.on('founded', function(msg){
+            notifyMe(msg);
+        });
     });
 }
 
