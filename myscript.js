@@ -110,7 +110,7 @@ var newConnection = function() {
         $('#volume').val(Last('last_volume'));
         (L('notification') == "1") ? setNotification() : setNoNotification();
         $('#mute').removeClass('disabled');
-        $('#notification').removeClass('disabled');
+        $('#notification_btn').removeClass('disabled');
         socket = io('http://liveany-log.switchnbreak.com:55688/');
         socket.on('connect', function(){
             this.emit('login', {user: userId, conversation: conversation_hash});
@@ -189,7 +189,7 @@ var setMute = function(){
 }
 
 var setNotification = function(){
-    $('#notification').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+    $('#notification_btn').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
     var L = extLocalStorage(conversation_hash);
     L('notification', 1);
     var Last = extLocalStorage('LastStatus');
@@ -197,7 +197,7 @@ var setNotification = function(){
 }
 
 var setNoNotification = function(){
-    $('#notification').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+    $('#notification_btn').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
     var L = extLocalStorage(conversation_hash);
     L('notification', 0);
     var Last = extLocalStorage('LastStatus');
@@ -228,7 +228,7 @@ var init = function () {
     var btns = '<div class="btn-group" style="float:right;top:0px">'
             + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
             + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
-            + '<button class="btn btn-default disabled" id="notification"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
+            + '<button class="btn btn-default disabled" id="notification_btn"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
             + '</div>';
     $('body').append(btns);
 
@@ -243,7 +243,7 @@ var init = function () {
         ($(this).find('span.glyphicon-volume-off').length > 0) ? setUnMute() :  setMute();
     });
 
-    $('body').on('click', '#notification', function(){
+    $('body').on('click', '#notification_btn', function(){
         ($(this).find('span.glyphicon-ok').length > 0) ? setNoNotification() : setNotification();
     });
 
