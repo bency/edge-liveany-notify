@@ -158,13 +158,12 @@ var enhanceMessage = function() {
         $('title').text(message_text);
 
         // 若還存在上一則提示，則強制關閉
-        if (!not_notify) {
+        if (!not_notify && notification) {
             notification.close();
             notification = null;
         }
 
         var L = extLocalStorage(conversation_hash);
-        (L('mute') === "0") ? document.getElementById('msn-sound').play() : null;
         (L('notification') === "1") ? notifyMe(message_text) : null;
     }
 }
