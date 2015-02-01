@@ -165,6 +165,7 @@ var enhanceMessage = function() {
 
         var L = extLocalStorage(conversation_hash);
         (L('notification') === "1") ? notifyMe(message_text) : null;
+        document.getElementById('msn-sound').play();
     }
 }
 
