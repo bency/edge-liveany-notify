@@ -102,6 +102,7 @@ var newConnection = function() {
     var count = $('#nowcounts').text();
     $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
+        socket.emit('login', {user: userId, conversation: conversation_hash});
         var L = extLocalStorage(conversation_hash);
         var Last = extLocalStorage('LastStatus');
         L('mute', Last('mute'));
@@ -111,13 +112,6 @@ var newConnection = function() {
         (L('notification') == "1") ? setNotification() : setNoNotification();
         $('#mute').removeClass('disabled');
         $('#notification_btn').removeClass('disabled');
-        socket = io('http://liveany-log.switchnbreak.com:55688/');
-        socket.on('connect', function(){
-            this.emit('login', {user: userId, conversation: conversation_hash});
-        });
-        socket.on('founded', function(msg){
-            notifyMe(msg);
-        });
     });
 }
 
@@ -131,6 +125,7 @@ var enhanceMessage = function() {
     var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
+    socket.emit('compare message', new_text);
     (new_text.match(connectedMatch)) ? newConnection() : null;
     if (match = new_text.match(imgMatch)) {
         new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
@@ -270,5 +265,6 @@ not_notify = true;
 conversation_hash = null;
 orig_title = $('title').text();
 notification = null
+socket = io('http://liveany-log.switchnbreak.com:55688/');
 
 init();
