@@ -266,8 +266,8 @@ conversation_hash = null;
 orig_title = $('title').text();
 notification = null
 socket = io('http://liveany-log.switchnbreak.com:55688/');
-socket.on('relogin', function(){
-    socket.emit('login', {user: checkCookie(), conversation: conversation_hash});
+socket.on('reconnection', function(){
+    newConnection();
 });
 
 init();
