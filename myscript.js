@@ -1,3 +1,5 @@
+DOMAIN = 'http://liveany-log.switchnbreak.com';
+
 var extLocalStorage = function(namespace){
     var localStorage = window.localStorage || {};
     if(typeof namespace !== "string") {
@@ -100,7 +102,7 @@ var notifyMe = function (text) {
 var newConnection = function() {
     var userId = checkCookie();
     var count = $('#nowcounts').text();
-    $.post('http://liveany-log.switchnbreak.com/conversation', {user_id: userId, count: count}).done( function(ret){
+    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
         socket.emit('login', {user: userId, conversation: conversation_hash});
         var L = extLocalStorage(conversation_hash);
@@ -138,7 +140,7 @@ var enhanceMessage = function() {
     var new_message = new_text + '<small>' + date.text() + '</small>';
     if (null !== conversation_hash && conversation_hash.length > 0) {
         $.post(
-            'http://liveany-log.switchnbreak.com/dialog',
+            DOMAIN + '/dialog',
             {hash: conversation_hash, content: new_text}
         )
     }
