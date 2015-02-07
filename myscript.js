@@ -66,15 +66,15 @@ var htmlEncode = function(value){
 
 var youtube_parser = function(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-    var match = url.match(regExp);
-    return (match&&match[7].length==11) ? match[7] : false;
+var match = url.match(regExp);
+return (match&&match[7].length==11) ? match[7] : false;
 }
 var notifyMe = function (text) {
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
     }
-    
+
     notification = new Notification('LiveAny', {
         icon: 'chrome-extension://' + extid + '/64.png',
         body: text,
@@ -85,11 +85,11 @@ var notifyMe = function (text) {
             notification.close();
         }, 5000);
     }
-    
+
     if (notification) {
         not_notify = false;
     }
-    
+
     notification.onclick = function () {
         not_notify = true;
         window.focus();
@@ -221,10 +221,10 @@ var init = function () {
     $('body').append(sound_frame);
 
     var btns = '<div class="btn-group" style="float:right;top:0px">'
-            + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
-            + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
-            + '<button class="btn btn-default disabled" id="notification_btn"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
-            + '</div>';
+    + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
+    + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
+    + '<button class="btn btn-default disabled" id="notification_btn"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
+    + '</div>';
     $('body').append(btns);
 
     // 出現新訊息時的處理
