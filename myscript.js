@@ -1,3 +1,10 @@
+extid = chrome.i18n.getMessage("@@extension_id")
+userId = checkCookie();
+not_notify = true;
+conversation_hash = null;
+orig_title = $('title').text();
+notification = null
+connected = false;
 DOMAIN = 'http://liveany-log.switchnbreak.com';
 
 var extLocalStorage = function(namespace){
@@ -23,6 +30,7 @@ var extLocalStorage = function(namespace){
     return mainFunction;
 };
 
+
 var getRandomToken = function() {
     // E.g. 8 * 32 = 256 bits token
     var randomPool = new Uint8Array(32);
@@ -35,14 +43,14 @@ var getRandomToken = function() {
     return hex.substring(0, 32);
 }
 
-var setCookie = function (cname, cvalue, exdays) {
+function setCookie (cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires=" + d.toUTCString();
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
-var getCookie = function (cname) {
+function getCookie (cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
@@ -53,7 +61,7 @@ var getCookie = function (cname) {
     return "";
 }
 
-var checkCookie = function() {
+function checkCookie () {
     var user = getCookie("liveany_log");
     if (user == "") {
         var id = getRandomToken();
@@ -68,8 +76,8 @@ var htmlEncode = function(value){
 
 var youtube_parser = function(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-var match = url.match(regExp);
-return (match&&match[7].length==11) ? match[7] : false;
+    var match = url.match(regExp);
+    return (match&&match[7].length==11) ? match[7] : false;
 }
 var notifyMe = function (text) {
     if (!Notification) {
@@ -100,11 +108,11 @@ var notifyMe = function (text) {
 }
 
 var newConnection = function() {
-    var userId = checkCookie();
     var count = $('#nowcounts').text();
     $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
         socket.emit('login', {user: userId, conversation: conversation_hash});
+        connected = true;
         var L = extLocalStorage(conversation_hash);
         var Last = extLocalStorage('LastStatus');
         L('mute', Last('mute'));
@@ -261,15 +269,15 @@ var init = function () {
     $('#display_area').find('div').first().remove();
 }
 
+socket = io(DOMAIN + ':55688/');
+socket.on('disconnect', function(){
+    connected = false;
+});
 
-extid = chrome.i18n.getMessage("@@extension_id")
-not_notify = true;
-conversation_hash = null;
-orig_title = $('title').text();
-notification = null
-socket = io('http://liveany-log.switchnbreak.com:55688/');
-socket.on('reconnection', function(){
-    newConnection();
+socket.on('connect', function(){
+    if (!connected && conversation_hash) {
+        this.emit('login', {user: userId, conversation: conversation_hash});
+    }
 });
 
 init();
