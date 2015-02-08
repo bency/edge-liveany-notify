@@ -287,7 +287,7 @@ socket.on('connect', function(){
 
 socket.on('matched', function(){
     matched = true;
-    $('#sendMessageButton').removeClass('btn-default').addClass('btn-info');
+    //$('#sendMessageButton').removeClass('btn-default').addClass('btn-info');
 });
 
 init();
