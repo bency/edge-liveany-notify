@@ -6,6 +6,8 @@ orig_title = $('title').text();
 notification = null
 connected = false;
 DOMAIN = 'http://liveany-log.switchnbreak.com';
+matched = false;
+dialogCount = 0;
 
 function extLocalStorage (namespace){
     var localStorage = window.localStorage || {};
@@ -119,7 +121,7 @@ var newConnection = function() {
         L('notification', Last('notification'));
         document.getElementById('msn-sound').volume = Last('last_volume');
         $('#volume').val(Last('last_volume'));
-        (L('notification') == "1") ? setNotification() : setNoNotification();
+        (L('notification') == "1") ? Config.setNotification() : Config.setNoNotification();
         $('#mute').removeClass('disabled');
         $('#notification_btn').removeClass('disabled');
     });
@@ -135,7 +137,8 @@ var enhanceMessage = function() {
     var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
-    socket.emit('compare message', new_text);
+    (matched || dialogCount < 10) ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
+    dialogCount++;
     (new_text.match(connectedMatch)) ? newConnection() : null;
     if (match = new_text.match(imgMatch)) {
         new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
@@ -173,40 +176,41 @@ var enhanceMessage = function() {
         document.getElementById('msn-sound').play();
     }
 }
+Config = new function () {
+    this.setUnMute = function(){
+        $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
+        var L = extLocalStorage(conversation_hash);
+        document.getElementById('msn-sound').volume = L('volume');
+        $('#volume').val(L('volume'));
+        var Last = extLocalStorage('LastStatus');
+        Last('last_volume', L('volume'));
+    }
 
-var setUnMute = function(){
-    $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
-    var L = extLocalStorage(conversation_hash);
-    document.getElementById('msn-sound').volume = L('volume');
-    $('#volume').val(L('volume'));
-    var Last = extLocalStorage('LastStatus');
-    Last('last_volume', L('volume'));
-}
+    this.setMute = function(){
+        $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
+        var L = extLocalStorage(conversation_hash);
+        L('volume', $('#volume').val());
+        document.getElementById('msn-sound').volume = 0;
+        $('#volume').val(0);
+        var Last = extLocalStorage('LastStatus');
+        Last('last_volume', 0);
+    }
 
-var setMute = function(){
-    $('#mute').find('span').removeClass('glyphicon-volume-up').addClass('glyphicon-volume-off');
-    var L = extLocalStorage(conversation_hash);
-    L('volume', $('#volume').val());
-    document.getElementById('msn-sound').volume = 0;
-    $('#volume').val(0);
-    var Last = extLocalStorage('LastStatus');
-    Last('last_volume', 0);
-}
+    this.setNotification = function(){
+        $('#notification_btn').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+        var L = extLocalStorage(conversation_hash);
+        L('notification', 1);
+        var Last = extLocalStorage('LastStatus');
+        Last('notification', 1);
+    }
 
-var setNotification = function(){
-    $('#notification_btn').find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
-    var L = extLocalStorage(conversation_hash);
-    L('notification', 1);
-    var Last = extLocalStorage('LastStatus');
-    Last('notification', 1);
-}
-
-var setNoNotification = function(){
-    $('#notification_btn').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
-    var L = extLocalStorage(conversation_hash);
-    L('notification', 0);
-    var Last = extLocalStorage('LastStatus');
-    Last('notification', 0);
+    this.setNoNotification = function(){
+        $('#notification_btn').find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+        var L = extLocalStorage(conversation_hash);
+        L('notification', 0);
+        var Last = extLocalStorage('LastStatus');
+        Last('notification', 0);
+    }
 }
 
 var init = function () {
@@ -245,11 +249,11 @@ var init = function () {
     });
 
     $('body').on('click', '#mute', function(){
-        ($(this).find('span.glyphicon-volume-off').length > 0) ? setUnMute() :  setMute();
+        ($(this).find('span.glyphicon-volume-off').length > 0) ? Config.setUnMute() :  Config.setMute();
     });
 
     $('body').on('click', '#notification_btn', function(){
-        ($(this).find('span.glyphicon-ok').length > 0) ? setNoNotification() : setNotification();
+        ($(this).find('span.glyphicon-ok').length > 0) ? Config.setNoNotification() : Config.setNotification();
     });
 
     $('body').on('change', '#volume', function(){
@@ -277,6 +281,7 @@ socket.on('disconnect', function(){
 socket.on('connect', function(){
     if (!connected && conversation_hash) {
         this.emit('login', {user: userId, conversation: conversation_hash});
+        connected = true;
     }
 });
 
