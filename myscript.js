@@ -7,7 +7,7 @@ notification = null
 connected = false;
 DOMAIN = 'http://liveany-log.switchnbreak.com';
 
-var extLocalStorage = function(namespace){
+function extLocalStorage (namespace){
     var localStorage = window.localStorage || {};
     if(typeof namespace !== "string") {
         throw new Error("extLocalStorage: Namespace must be a string");
@@ -31,7 +31,7 @@ var extLocalStorage = function(namespace){
 };
 
 
-var getRandomToken = function() {
+function getRandomToken () {
     // E.g. 8 * 32 = 256 bits token
     var randomPool = new Uint8Array(32);
     crypto.getRandomValues(randomPool);
@@ -70,7 +70,7 @@ function checkCookie () {
     return getCookie("liveany_log");
 }
 
-var htmlEncode = function(value){
+function htmlEncode (value){
     return $('<div/>').text(value).html();
 }
 
