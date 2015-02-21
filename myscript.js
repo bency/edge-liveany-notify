@@ -146,7 +146,6 @@ var enhanceMessage = function() {
     var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
-    (matched || dialogCount < 10) ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
     dialogCount++;
     (new_text.match(connectedMatch)) ? newConnection() : null;
     if (match = new_text.match(imgMatch)) {
@@ -168,6 +167,7 @@ var enhanceMessage = function() {
     $orig_message.html(new_message);
     $(this).bind("DOMSubtreeModified", enhanceMessage);
 
+    platform = platform || (date.text().split(' ')[1]);
     // 陌生人訊息
     if (message_text.match(/^陌生人/) && !document.hasFocus()) {
 
@@ -184,6 +184,7 @@ var enhanceMessage = function() {
         (L('notification') === "1") ? notifyMe(message_text) : null;
         document.getElementById('msn-sound').play();
     }
+    (matched || dialogCount < 10 || platform !== "web") ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
 }
 Config = new function () {
     this.setUnMute = function(){
