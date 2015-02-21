@@ -8,6 +8,15 @@ connected = false;
 DOMAIN = 'http://liveany-log.switchnbreak.com';
 matched = false;
 dialogCount = 0;
+version = 0;
+platform = null;
+
+(function () {
+    $.get(chrome.extension.getURL('manifest.json')).done(function(data, status){
+        manifest = JSON.parse(data);
+        version = manifest.version;
+    });
+})();
 
 function extLocalStorage (namespace){
     var localStorage = window.localStorage || {};
@@ -113,7 +122,7 @@ var newConnection = function() {
     var count = $('#nowcounts').text();
     $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done( function(ret){
         conversation_hash = ret.hash;
-        socket.emit('login', {user: userId, conversation: conversation_hash});
+        socket.emit('login', {user: userId, conversation: conversation_hash, version: version});
         connected = true;
         var L = extLocalStorage(conversation_hash);
         var Last = extLocalStorage('LastStatus');
