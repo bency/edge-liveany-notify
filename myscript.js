@@ -17,6 +17,44 @@ platform = null;
         version = manifest.version;
     });
 })();
+window.uploadPhotos = function() {
+
+    // Read in file
+    var file = event.target.files[0];
+    console.log(file);
+
+    // Ensure it's an image
+    if(file.type.match(/image.*/)) {
+        console.log('An image has been loaded');
+
+        // Load the image
+        var reader = new FileReader();
+        reader.onload = function (readerEvent) {
+            console.log('aaa');
+            var base64 = readerEvent.target.result.replace(/.*,/, '');
+            $.ajax({
+                url: 'https://api.imgur.com/3/image',
+                headers: {
+                    'Authorization': 'Client-ID a5314187be28198'
+                },
+                type: 'POST',
+                data: {
+                    'image': base64,
+                    'type': 'base64'
+                },
+                success: function(ret, status) {
+                    if ('success' != status) {
+                        return;
+                    }
+                    var url = ret.data.link;
+                    $('#inputText').val(url);
+                    $('#sendMessageButton').click();
+                }
+            });
+        }
+        reader.readAsDataURL(file);
+    }
+}
 
 function extLocalStorage (namespace){
     var localStorage = window.localStorage || {};
@@ -244,10 +282,14 @@ var init = function () {
     sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
     $('body').append(sound_frame);
 
-    var btns = '<div class="btn-group" style="float:right;top:0px">'
+    var btns = '<div class="btn-group" id="panel" style="float:right;top:0px">'
     + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
     + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
     + '<button class="btn btn-default disabled" id="notification_btn"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
+    + '<div class="btn btn-primary" style="position: relative; overflow: hidden;">'
+    + '<span>Upload</span>'
+    + '<input id="uploadPhoto" name="files[]" type="file" style="position: absolute; top: 0; right: 0; margin: 0; padding: 0; font-size: 20px; cursor: pointer; opacity: 0; filter: alpha(opacity=0);">'
+    + '</div>'
     + '</div>';
     $('body').append(btns);
 
@@ -265,6 +307,8 @@ var init = function () {
     $('body').on('click', '#notification_btn', function(){
         ($(this).find('span.glyphicon-ok').length > 0) ? Config.setNoNotification() : Config.setNotification();
     });
+
+    $('body').on('change', '#uploadPhoto', uploadPhotos);
 
     $('body').on('change', '#volume', function(){
         var volume = $(this).val();
