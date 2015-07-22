@@ -294,7 +294,7 @@ var init = function () {
     $('body').append(btns);
 
     // 出現新訊息時的處理
-    $("#display_area").bind("DOMSubtreeModified", enhanceMessage);
+    $("#chat_area").bind("DOMSubtreeModified", enhanceMessage);
 
     $(window).bind('focus',function() {
         (notification) ? notification.close() : null;
@@ -322,9 +322,8 @@ var init = function () {
         }
     });
 
-    $('#base').css('right', 0);
-    $('#ads').remove();
-    $('#display_area').find('div').first().remove();
+    // 移除廣告
+    $('#chat_area').find('div').first().remove();
 }
 
 socket = io(DOMAIN + ':55688/');
