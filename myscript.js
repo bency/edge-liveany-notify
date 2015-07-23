@@ -283,7 +283,8 @@ var init = function () {
     sound_frame = '<audio id="msn-sound" type="audio/mpeg" src="' + sound_path + '" style="display:none;"></audio>';
     $('body').append(sound_frame);
 
-    var btns = '<div class="btn-group" id="panel" style="float:right;top:0px">'
+    var btns = '<div style="float:right;top:0px">'
+    + '<div class="btn-group" id="panel">'
     + '<input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>'
     + '<button class="btn btn-default disabled" id="mute"><span class="glyphicon glyphicon-volume-up"></span> 音效</button>'
     + '<button class="btn btn-default disabled" id="notification_btn"><span class="glyphicon glyphicon-ok"></span> 彈出通知</button>'
@@ -291,8 +292,18 @@ var init = function () {
     + '<span>Upload</span>'
     + '<input id="uploadPhoto" name="files[]" type="file" style="position: absolute; top: 0; right: 0; margin: 0; padding: 0; font-size: 20px; cursor: pointer; opacity: 0; filter: alpha(opacity=0);">'
     + '</div>'
+    + '</div>'
+    + '<div class="input-group" style="width:240px">'
+    + '<div class="input-group-addon">發語詞</div>'
+    + '<input id="auto-send" class="form-control" type="text">'
+    + '</div>';
     + '</div>';
     $('body').append(btns);
+
+    if ($('#auto-send').val() && $('#auto-send').val().length > 0) {
+        $('#inputText').val($('#auto-send').val());
+        $('#sendMessageButton').click();
+    }
 
     // 出現新訊息時的處理
     $("#chat_area").bind("DOMSubtreeModified", enhanceMessage);
