@@ -155,10 +155,7 @@ var notifyMe = function (text) {
         $('#inputText').focus();
     }
 }
-
-var newConnection = function() {
-    var count = $('#nowcounts').text();
-    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done( function(ret){
+var getConversationHash = function(ret) {
         conversation_hash = ret.hash;
         socket.emit('login', {user: userId, conversation: conversation_hash, version: version});
         connected = true;
@@ -171,7 +168,11 @@ var newConnection = function() {
         (L('notification') == "1") ? Config.setNotification() : Config.setNoNotification();
         $('#mute').removeClass('disabled');
         $('#notification_btn').removeClass('disabled');
-    });
+}
+
+var newConnection = function(cb) {
+    var count = $('#nowcounts').text();
+    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done(getConversationHash);
 }
 
 var enhanceMessage = function() {
