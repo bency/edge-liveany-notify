@@ -333,9 +333,19 @@ var init = function () {
             $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
         }
     });
+    var pre_send = Last('pre_send');
+    if (pre_send.length > 0) {
+        $('#auto-send').val(pre_send);
+        $('#inputText').val(pre_send);
+        $('#sendMessageButton').click();
+    }
 
     // 移除廣告
     $('#chat_area').find('div').first().remove();
+    $('#auto-send').bind('keyup', function(){
+        pre_send = $(this).val();
+        Last('pre_send', pre_send);
+    });
 }
 
 socket = io(DOMAIN + ':55688/');
