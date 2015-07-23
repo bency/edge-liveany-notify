@@ -155,24 +155,18 @@ var notifyMe = function (text) {
         $('#inputText').focus();
     }
 }
-var getConversationHash = function(ret) {
+var getConversationHash = function(ret, cb) {
         conversation_hash = ret.hash;
         socket.emit('login', {user: userId, conversation: conversation_hash, version: version});
         connected = true;
-        var L = extLocalStorage(conversation_hash);
-        var Last = extLocalStorage('LastStatus');
-        L('mute', Last('mute'));
-        L('notification', Last('notification'));
-        document.getElementById('msn-sound').volume = Last('last_volume');
-        $('#volume').val(Last('last_volume'));
-        (L('notification') == "1") ? Config.setNotification() : Config.setNoNotification();
-        $('#mute').removeClass('disabled');
-        $('#notification_btn').removeClass('disabled');
+        if (cb) {cb();}
 }
 
 var newConnection = function(cb) {
     var count = $('#nowcounts').text();
-    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done(getConversationHash);
+    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done(function(ret){
+        getConversationHash(ret, cb);
+    });
 }
 
 var enhanceMessage = function() {
@@ -299,6 +293,15 @@ var init = function () {
     + '</div>';
     + '</div>';
     $('body').append(btns);
+    var L = extLocalStorage(conversation_hash);
+    var Last = extLocalStorage('LastStatus');
+    L('mute', Last('mute'));
+    L('notification', Last('notification'));
+    document.getElementById('msn-sound').volume = Last('last_volume');
+    $('#volume').val(Last('last_volume'));
+    (L('notification') == "1") ? Config.setNotification() : Config.setNoNotification();
+    $('#mute').removeClass('disabled');
+    $('#notification_btn').removeClass('disabled');
 
     if ($('#auto-send').val() && $('#auto-send').val().length > 0) {
         $('#inputText').val($('#auto-send').val());
@@ -365,4 +368,4 @@ socket.on('matched', function(){
     //$('#sendMessageButton').removeClass('btn-default').addClass('btn-info');
 });
 
-init();
+newConnection(init);
