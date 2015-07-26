@@ -351,9 +351,14 @@ var init = function () {
         }
     });
     var pre_send = Last('pre_send');
+
     if (pre_send.length > 0) {
         $('#auto-send').val(pre_send);
-        $('#inputText').val(pre_send);
+    }
+
+    var part_pre_send;
+    for (i = 1, part_pre_send = pre_send.substr(0, 100); part_pre_send.length > 0; part_pre_send = pre_send.substr(i * 100, 100), i++) {
+        $('#inputText').val(part_pre_send);
         $('#sendMessageButton').click();
     }
 
