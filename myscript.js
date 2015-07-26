@@ -169,14 +169,29 @@ var newConnection = function(cb) {
     });
 }
 
+var embedOjbect = function (text) {
+
+    var linkMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
+    var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
+
+    if (match = text.match(imgMatch)) {
+        text = text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
+    }
+    if (match = text.match(linkMatch)) {
+        text = text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a>');
+    }
+    if (youtube_id = youtube_parser(text)) {
+        text = text + '<br><iframe width="560" height="315" src="//www.youtube.com/embed/' + youtube_id + '" frameborder="0" allowfullscreen></iframe>';
+    }
+    return text;
+}
+
 var enhanceMessage = function() {
     $orig_message = $(this).children().last();
     var $message = $orig_message.clone();
     var date = $message.children().clone();
     var message_text = $message.children().remove().end().text();
     var new_text = htmlEncode(message_text);
-    var linkMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
-    var imgMatch = /(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/;
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
     dialogCount++;
