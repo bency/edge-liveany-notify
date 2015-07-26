@@ -199,15 +199,20 @@ var enhanceMessage = function() {
     }
     var message_text = $message.children().remove().end().text();
     var new_text = htmlEncode(message_text);
-    var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
     dialogCount++;
+    var message_type = 'system';
     new_text = embedOjbect(new_text);
     var new_message = new_text + '<small>' + date[0].innerHTML + '</small>';
     if (null !== conversation_hash && conversation_hash.length > 0) {
+        if (className.match(/left/)) {
+            message_type = 'stranger';
+        } else if (className.match(/right/)) {
+            message_type = 'me';
+        }
         $.post(
             DOMAIN + '/dialog',
-            {hash: conversation_hash, content: new_text}
+            {hash: conversation_hash, content: new_text, message_type: message_type}
         )
     }
     $(this).unbind("DOMSubtreeModified", enhanceMessage);
@@ -216,7 +221,7 @@ var enhanceMessage = function() {
 
     platform = platform || (date.text().split(' ')[1]);
     // 陌生人訊息
-    if (message_text.match(/^陌生人/) && !document.hasFocus()) {
+    if ('system' == message_type && !document.hasFocus()) {
 
         // 將訊息顯示在標題列上
         $('title').text(message_text);
