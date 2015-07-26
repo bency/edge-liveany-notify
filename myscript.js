@@ -195,16 +195,7 @@ var enhanceMessage = function() {
     var connectedMatch = /連線成功，正等著陌生人/;
     var match = null;
     dialogCount++;
-    (new_text.match(connectedMatch)) ? newConnection() : null;
-    if (match = new_text.match(imgMatch)) {
-        new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(jpe?g|png|gif)(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a><br><img width="560" img-rounded" src="$1"><br>');
-    } else if (match = new_text.match(linkMatch)) {
-        new_text = new_text.replace(/(https?:\/\/[\w-\.]+(:\d+)?(\/[\w\/\.]*)?(\?\S*)?(-\S*)?(%\S*)?(#\S*)?)/g, '<a href="$1" target="_blank" >$1</a>');
-    }
-    if (youtube_id = youtube_parser(message_text)) {
-        new_text = new_text + '<br><iframe width="560" height="315" src="//www.youtube.com/embed/' + youtube_id + '" frameborder="0" allowfullscreen></iframe>';
-    }
-    var new_message = new_text + '<small>' + date.text() + '</small>';
+    new_text = embedOjbect(new_text);
     if (null !== conversation_hash && conversation_hash.length > 0) {
         $.post(
             DOMAIN + '/dialog',
