@@ -21,16 +21,13 @@ window.uploadPhotos = function() {
 
     // Read in file
     var file = event.target.files[0];
-    console.log(file);
 
     // Ensure it's an image
     if(file.type.match(/image.*/)) {
-        console.log('An image has been loaded');
 
         // Load the image
         var reader = new FileReader();
         reader.onload = function (readerEvent) {
-            console.log('aaa');
             var base64 = readerEvent.target.result.replace(/.*,/, '');
             $.ajax({
                 url: 'https://api.imgur.com/3/image',
