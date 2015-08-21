@@ -245,6 +245,9 @@ var enhanceMessage = function() {
         (L('notification') === "1") ? notifyMe(message_text) : null;
         return document.getElementById('msn-sound').play();
     }
+    if ('system' == message_type && message_text.match(/成功與陌生人連線，互相打個招呼吧/)) {
+        sendOpenMessage();
+    }
     (matched || dialogCount < 10 || platform !== "web") ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
 }
 Config = new function () {
