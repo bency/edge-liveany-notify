@@ -207,13 +207,21 @@ var enhanceMessage = function() {
     } else if (className.match(/right/)) {
         message_type = 'me';
     }
-    var date = $message.children().clone();
-    var message_text = $message.children().remove().end().text();
-    var new_text = htmlEncode(message_text);
+    var date = $message.children().last().clone();
+    if (date.length > 0) {
+        $message.children().last().remove();
+        var message_text = $message[0].innerHTML;
+    } else {
+        var message_text = $message[0].innerHTML;
+    }
+    var new_text = message_text;
     var match = null;
     dialogCount++;
     new_text = embedOjbect(new_text);
-    var new_message = new_text + '<small>' + date[0].innerHTML + '</small>';
+    var new_message = new_text;
+    if (date.length > 0) {
+        new_message = new_text + '<small>' + date[0].innerHTML + '</small>';
+    }
     if (null !== conversation_hash && conversation_hash.length > 0) {
         $.post(
             DOMAIN + '/dialog',
