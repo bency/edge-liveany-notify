@@ -190,23 +190,20 @@ var enhanceMessage = function() {
     if ('clear' == className) {
         return;
     }
-    var date = $message.children().clone();
-    if (1 > date.length) {
-        return;
+    var message_type = 'system';
+    if (className.match(/left/)) {
+        message_type = 'stranger';
+    } else if (className.match(/right/)) {
+        message_type = 'me';
     }
+    var date = $message.children().clone();
     var message_text = $message.children().remove().end().text();
     var new_text = htmlEncode(message_text);
     var match = null;
     dialogCount++;
-    var message_type = 'system';
     new_text = embedOjbect(new_text);
     var new_message = new_text + '<small>' + date[0].innerHTML + '</small>';
     if (null !== conversation_hash && conversation_hash.length > 0) {
-        if (className.match(/left/)) {
-            message_type = 'stranger';
-        } else if (className.match(/right/)) {
-            message_type = 'me';
-        }
         $.post(
             DOMAIN + '/dialog',
             {hash: conversation_hash, content: new_text, message_type: message_type}
