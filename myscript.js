@@ -245,6 +245,15 @@ var enhanceMessage = function() {
         (L('notification') === "1") ? notifyMe(message_text) : null;
         return document.getElementById('msn-sound').play();
     }
+    if ('system' == message_type && message_text.match(/陌生人離開/)) {
+        if (notification) {
+            notification.close();
+        }
+        if (dialogCount < 10) {
+            window.location.reload();
+        }
+        return;
+    }
     if ('system' == message_type && message_text.match(/成功與陌生人連線，互相打個招呼吧/)) {
         sendOpenMessage();
     }
