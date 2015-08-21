@@ -183,6 +183,21 @@ var embedOjbect = function (text) {
     return text;
 }
 
+var sendOpenMessage = function () {
+    var Last = extLocalStorage('LastStatus');
+    var pre_send = Last('pre_send');
+
+    if (pre_send.length > 0) {
+        $('#auto-send').val(pre_send);
+    }
+
+    var part_pre_send;
+    for (i = 1, part_pre_send = pre_send.substr(0, 100); part_pre_send.length > 0; part_pre_send = pre_send.substr(i * 100, 100), i++) {
+        $('#inputText').val(part_pre_send);
+        $('#sendMessageButton').click();
+    }
+}
+
 var enhanceMessage = function() {
     $orig_message = $(this).children().last();
     var $message = $orig_message.clone();
@@ -349,17 +364,6 @@ var init = function () {
             $('#mute').find('span').removeClass('glyphicon-volume-off').addClass('glyphicon-volume-up');
         }
     });
-    var pre_send = Last('pre_send');
-
-    if (pre_send.length > 0) {
-        $('#auto-send').val(pre_send);
-    }
-
-    var part_pre_send;
-    for (i = 1, part_pre_send = pre_send.substr(0, 100); part_pre_send.length > 0; part_pre_send = pre_send.substr(i * 100, 100), i++) {
-        $('#inputText').val(part_pre_send);
-        $('#sendMessageButton').click();
-    }
 
     // 移除廣告
     $('#chat_area').find('div').first().remove();
