@@ -215,7 +215,7 @@ var enhanceMessage = function() {
 
     platform = platform || (date.text().split(' ')[1]);
     // 陌生人訊息
-    if ('system' == message_type && !document.hasFocus()) {
+    if ('stranger' == message_type && !document.hasFocus()) {
 
         // 將訊息顯示在標題列上
         $('title').text(message_text);
@@ -228,7 +228,7 @@ var enhanceMessage = function() {
 
         var L = extLocalStorage(conversation_hash);
         (L('notification') === "1") ? notifyMe(message_text) : null;
-        document.getElementById('msn-sound').play();
+        return document.getElementById('msn-sound').play();
     }
     (matched || dialogCount < 10 || platform !== "web") ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
 }
