@@ -187,7 +187,7 @@ var enhanceMessage = function() {
     $orig_message = $(this).children().last();
     var $message = $orig_message.clone();
     var className = $message[0].className;
-    if (className.length == 0) {
+    if ('clear' == className) {
         return;
     }
     var date = $message.children().clone();
