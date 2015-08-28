@@ -233,6 +233,7 @@ var enhanceMessage = function() {
     $(this).bind("DOMSubtreeModified", enhanceMessage);
 
     platform = platform || (date.text().split(' ')[1]);
+    socket.emit('show message', {message: new_text, from: message_type})
     // 陌生人訊息
     if ('stranger' == message_type && !document.hasFocus()) {
 
@@ -261,7 +262,7 @@ var enhanceMessage = function() {
     if ('system' == message_type && message_text.match(/成功與陌生人連線，互相打個招呼吧/)) {
         sendOpenMessage();
     }
-    (matched || dialogCount < 10 || platform !== "web") ? socket.emit('show message', new_text) : socket.emit('compare message', new_text);
+    (matched || dialogCount < 10 || platform !== "web") ? '' : socket.emit('compare message', new_text);
 }
 Config = new function () {
     this.setUnMute = function(){
@@ -403,6 +404,7 @@ socket.on('connect', function(){
 
 socket.on('matched', function(){
     matched = true;
+    console.log('you are matched with stranger');
     //$('#sendMessageButton').removeClass('btn-default').addClass('btn-info');
 });
 
