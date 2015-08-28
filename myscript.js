@@ -1,5 +1,5 @@
 extid = chrome.i18n.getMessage("@@extension_id")
-userId = checkCookie();
+userId = getUserId();
 not_notify = true;
 conversation_hash = null;
 orig_title = $('title').text();
@@ -107,7 +107,7 @@ function getCookie (cname) {
     return "";
 }
 
-function checkCookie () {
+function getUserId () {
     var userId = getCookie("liveany_log");
     if (userId == "") {
         var userId = getRandomToken();
