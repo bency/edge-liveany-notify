@@ -108,12 +108,12 @@ function getCookie (cname) {
 }
 
 function checkCookie () {
-    var user = getCookie("liveany_log");
-    if (user == "") {
-        var id = getRandomToken();
-        setCookie("liveany_log", id, 365);
+    var userId = getCookie("liveany_log");
+    if (userId == "") {
+        var userId = getRandomToken();
+        setCookie("liveany_log", userId, 365);
     }
-    return getCookie("liveany_log");
+    return userId;
 }
 
 function htmlEncode (value){
