@@ -6,14 +6,14 @@
   "icons": {"16": "16.png", "48": "48.png", "64": "64.png", "128": "128.png"},
   "permissions": [
     "notifications",
-    "http://www.liveany.com/*",
-    "http://liveany-log.switchnbreak.com/*",
+    "https://www.liveany.com/web.html",
+    "https://liveany-log.switchnbreak.com/*",
     "tabs",
     "activeTab"
   ],
   "content_scripts": [
       {
-          "matches": ["http://www.liveany.com/*"],
+          "matches": ["https://www.liveany.com/*"],
           "js": ["jquery.js", "socket.js", "myscript.js"]
       }
   ],
