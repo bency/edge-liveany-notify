@@ -152,18 +152,14 @@ var notifyMe = function (text) {
         $('#inputText').focus();
     }
 }
-var getConversationHash = function(ret, cb) {
-        conversation_hash = ret.hash;
-        socket.emit('login', {user: userId, conversation: conversation_hash, version: version});
+var getConversationHash = function(cb) {
+        conversation_hash = 'ssss';
         connected = true;
         if (cb) {cb();}
 }
 
 var newConnection = function(cb) {
-    var count = $('#nowcounts').text();
-    $.post(DOMAIN + '/conversation', {user_id: userId, count: count}).done(function(ret){
-        getConversationHash(ret, cb);
-    });
+    getConversationHash(cb);
 }
 
 var embedOjbect = function (text) {
@@ -222,18 +218,11 @@ var enhanceMessage = function() {
     if (date.length > 0) {
         new_message = new_text + '<small>' + date[0].innerHTML + '</small>';
     }
-    if (null !== conversation_hash && conversation_hash.length > 0) {
-        $.post(
-            DOMAIN + '/dialog',
-            {hash: conversation_hash, content: new_text, message_type: message_type}
-        )
-    }
     $(this).unbind("DOMSubtreeModified", enhanceMessage);
     $orig_message.html(new_message);
     $(this).bind("DOMSubtreeModified", enhanceMessage);
 
     platform = platform || (date.text().split(' ')[1]);
-    socket.emit('show message', {message: new_text, from: message_type})
     // 陌生人訊息
     if ('stranger' == message_type && !document.hasFocus()) {
 
@@ -262,7 +251,6 @@ var enhanceMessage = function() {
     if ('system' == message_type && message_text.match(/成功與陌生人連線，互相打個招呼吧/)) {
         sendOpenMessage();
     }
-    (matched || dialogCount < 10 || platform !== "web") ? '' : socket.emit('compare message', new_text);
 }
 Config = new function () {
     this.setUnMute = function(){
@@ -389,23 +377,4 @@ var init = function () {
         Last('pre_send', pre_send);
     });
 }
-
-socket = io(DOMAIN + ':55688/');
-socket.on('disconnect', function(){
-    connected = false;
-});
-
-socket.on('connect', function(){
-    if (!connected && conversation_hash) {
-        this.emit('login', {user: userId, conversation: conversation_hash});
-        connected = true;
-    }
-});
-
-socket.on('matched', function(){
-    matched = true;
-    console.log('you are matched with stranger');
-    //$('#sendMessageButton').removeClass('btn-default').addClass('btn-info');
-});
-
 newConnection(init);
