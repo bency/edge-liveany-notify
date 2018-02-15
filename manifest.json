@@ -14,7 +14,7 @@
   "content_scripts": [
       {
           "matches": ["https://www.liveany.com/*"],
-          "js": ["jquery.js", "socket.js", "myscript.js"]
+          "js": ["jquery.js", "myscript.js"]
       }
   ],
   "manifest_version": 2,
