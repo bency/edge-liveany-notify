@@ -12,8 +12,7 @@ version = 0;
 platform = null;
 
 (function () {
-    $.get(chrome.extension.getURL('manifest.json')).done(function(data, status){
-        manifest = JSON.parse(data);
+    $.get(chrome.extension.getURL('manifest.json')).done(function(manifest, status){
         version = manifest.version;
     });
 })();
