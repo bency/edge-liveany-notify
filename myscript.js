@@ -179,13 +179,16 @@ var embedOjbect = function (text) {
 
 var sendOpenMessage = function () {
     var Last = extLocalStorage('LastStatus'),
-        pre_send = Last('pre_send'),
-        part_pre_send;
+        pre_send = Last('pre_send');
+    sendMessage(pre_send);
+}
+
+var sendMessage = function (pre_send) {
     for (i = 1, part_pre_send = pre_send.substr(0, 100); part_pre_send.length > 0; part_pre_send = pre_send.substr(i * 100, 100), i++) {
         $('#inputText').val(part_pre_send);
         $('#sendMessageButton').click();
     }
-}
+};
 
 var enhanceMessage = function() {
     $orig_message = $(this).children().last();
