@@ -178,22 +178,9 @@ var embedOjbect = function (text) {
 }
 
 var sendOpenMessage = function () {
-    var Last = extLocalStorage('LastStatus');
-    var pre_send = Last('pre_send'),
-        auto_reply = Last('auto_reply'),
-        when_receive = Last('when_receive');
-
-    if (pre_send.length > 0) {
-        $('#auto-send').val(pre_send);
-    }
-    if (auto_reply.length > 0) {
-        $('#auto-reply').val(auto_reply);
-    }
-    if (when_receive.length > 0) {
-        $('#when-receive').val(when_receive);
-    }
-
-    var part_pre_send;
+    var Last = extLocalStorage('LastStatus'),
+        pre_send = Last('pre_send'),
+        part_pre_send;
     for (i = 1, part_pre_send = pre_send.substr(0, 100); part_pre_send.length > 0; part_pre_send = pre_send.substr(i * 100, 100), i++) {
         $('#inputText').val(part_pre_send);
         $('#sendMessageButton').click();
@@ -202,8 +189,11 @@ var sendOpenMessage = function () {
 
 var enhanceMessage = function() {
     $orig_message = $(this).children().last();
-    var $message = $orig_message.clone();
-    var className = $message[0].className;
+    var Last = extLocalStorage('LastStatus'),
+        $message = $orig_message.clone(),
+        className = $message[0].className,
+        auto_reply = Last('auto_reply'),
+        when_receive = Last('when_receive');
     if ('clear' == className) {
         return;
     }
@@ -300,11 +290,15 @@ Config = new function () {
 }
 
 var init = function () {
+    var Last = extLocalStorage('LastStatus'),
+        pre_send = Last('pre_send'),
+        auto_reply = Last('auto_reply'),
+        when_receive = Last('when_receive');
+
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     }
 
-    var Last = extLocalStorage('LastStatus');
     if (Last('last_volume') === undefined || !isFinite(Last('last_volume'))) {
         Last('last_volume', 0.5);
     }
@@ -344,6 +338,15 @@ var init = function () {
     + '</div>'
     + '</div>';
     $('body').append(btns);
+    if (pre_send.length > 0) {
+        $('#auto-send').val(pre_send);
+    }
+    if (auto_reply.length > 0) {
+        $('#auto-reply').val(auto_reply);
+    }
+    if (when_receive.length > 0) {
+        $('#when-receive').val(when_receive);
+    }
     var L = extLocalStorage(conversation_hash);
     var Last = extLocalStorage('LastStatus');
     L('mute', Last('mute'));
