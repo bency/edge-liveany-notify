@@ -341,10 +341,10 @@ var init = function () {
     if (pre_send.length > 0) {
         $('#auto-send').val(pre_send);
     }
-    if (auto_reply.length > 0) {
+    if (auto_reply && auto_reply.length > 0) {
         $('#auto-reply').val(auto_reply);
     }
-    if (when_receive.length > 0) {
+    if (when_receive && when_receive.length > 0) {
         $('#when-receive').val(when_receive);
     }
     var L = extLocalStorage(conversation_hash);
