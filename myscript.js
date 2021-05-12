@@ -394,5 +394,11 @@ var init = function () {
         pre_send = $(this).val();
         Last('pre_send', pre_send);
     });
+    $('#auto-reply').bind('keyup', function(){
+        Last('auto_reply', $(this).val());
+    });
+    $('#when-receive').bind('keyup', function(){
+        Last('when_receive', $(this).val());
+    });
 }
 newConnection(init);
