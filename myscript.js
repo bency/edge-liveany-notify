@@ -11,6 +11,9 @@ dialogCount = 0;
 version = 0;
 platform = null;
 
+(function(proxied) {
+    window.confirm = function() {};
+})(window.confirm);
 (function () {
     $.get(chrome.extension.getURL('manifest.json')).done(function(manifest, status){
         version = manifest.version;
