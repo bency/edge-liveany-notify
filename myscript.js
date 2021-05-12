@@ -254,6 +254,9 @@ var enhanceMessage = function() {
     if ('system' == message_type && message_text.match(/成功與陌生人連線，互相打個招呼吧/)) {
         sendOpenMessage();
     }
+    if (message_text.match(when_receive)) {
+        sendMessage(auto_reply);
+    }
 }
 Config = new function () {
     this.setUnMute = function(){
