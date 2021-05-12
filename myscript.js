@@ -325,7 +325,15 @@ var init = function () {
     + '<div class="input-group" style="width:240px">'
     + '<div class="input-group-addon">發語詞</div>'
     + '<input id="auto-send" class="form-control" type="text">'
-    + '</div>';
+    + '</div>'
+    + '<div class="input-group" style="width:240px">'
+    + '<div class="input-group-addon">當收到</div>'
+    + '<input id="when-receive" class="form-control" type="text">'
+    + '</div>'
+    + '<div class="input-group" style="width:240px">'
+    + '<div class="input-group-addon">自動回應</div>'
+    + '<input id="auto-reply" class="form-control" type="text">'
+    + '</div>'
     + '</div>';
     $('body').append(btns);
     var L = extLocalStorage(conversation_hash);
