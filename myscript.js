@@ -179,10 +179,18 @@ var embedOjbect = function (text) {
 
 var sendOpenMessage = function () {
     var Last = extLocalStorage('LastStatus');
-    var pre_send = Last('pre_send');
+    var pre_send = Last('pre_send'),
+        auto_reply = Last('auto_reply'),
+        when_receive = Last('when_receive');
 
     if (pre_send.length > 0) {
         $('#auto-send').val(pre_send);
+    }
+    if (auto_reply.length > 0) {
+        $('#auto-reply').val(auto_reply);
+    }
+    if (when_receive.length > 0) {
+        $('#when-receive').val(when_receive);
     }
 
     var part_pre_send;
